@@ -13,7 +13,15 @@ class Order extends Model
         'invoice',
         'total_price',
         'shipping_cost',
-        'status'
+        'status',
+        'logistic_status',
+        'shipped_at',
+        'delivered_at',
+    ];
+
+    protected $casts = [
+        'shipped_at' => 'datetime',
+        'delivered_at' => 'datetime',
     ];
 
     public function items()
@@ -26,4 +34,3 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 }
-

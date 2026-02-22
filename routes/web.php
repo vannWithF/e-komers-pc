@@ -69,17 +69,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'isAdmin'])
-    ->prefix('admin') // URL jadi: /admin/...
-    ->name('admin.')   // Nama route jadi: admin.index
+    ->prefix('admin')
+    ->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
 
         Route::resource('products', ProductController::class);
         Route::resource('categories', CategoryController::class);
         Route::resource('setups', SetupController::class);
-        
-        Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
+
+        Route::resource('orders', AdminOrderController::class)
+            ->only(['index', 'show', 'update']);
+
+        Route::patch(
+            'orders/{order}/logistic',
+            [AdminOrderController::class, 'updateLogistic']
+        )->name('orders.updateLogistic');
 });
 
 require __DIR__.'/auth.php';

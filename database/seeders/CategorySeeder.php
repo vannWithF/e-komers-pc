@@ -17,16 +17,23 @@ class CategorySeeder extends Seeder
             'Motherboard',
             'RAM',
             'SSD',
+            'PSU',
+            'PC CASE',
+            'FAN COOLER',
+            'FAN CASE',
             'Peripheral',
         ];
 
         foreach ($categories as $cat) {
-            Category::create([
-                'name' => $cat,
-                'slug' => Str::slug($cat),
-                'type' => 'component'
-            ]);
+            // Pakai updateOrCreate supaya kalau datanya sudah ada, dia cuma update
+            // Ini solusi biar gak kena "Duplicate Entry" lagi
+            Category::updateOrCreate(
+                ['slug' => Str::slug($cat)], // Cek kolom slug
+                [
+                    'name' => $cat,
+                    'type' => 'component'
+                ]
+            );
         }
     }
 }
-

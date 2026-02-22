@@ -34,5 +34,26 @@ class OrderController extends Controller
 
         return redirect()->back()->with('success', 'Status berhasil diubah');
     }
+
+        public function updateLogistic(Request $request, Order $order)
+    {
+        $request->validate([
+            'logistic_status' => 'required'
+        ]);
+
+        $order->logistic_status = $request->logistic_status;
+
+        if ($request->logistic_status === 'shipped') {
+            $order->shipped_at = now();
+        }
+
+        if ($request->logistic_status === 'delivered') {
+            $order->delivered_at = now();
+        }
+
+        $order->save();
+
+        return back()->with('success', 'Status logistik diperbarui');
+    }
 }
 
