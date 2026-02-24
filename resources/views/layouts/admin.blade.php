@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | StoreKit Native</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --bg-sidebar: #0f172a;
-            --bg-main: #f8fafc;
-            --text-muted: #94a3b8;
+            /* iPhone 17 Pro Max Orange Palette (Titanium Orange) */
+            --titanium-orange: #ff6b35;
+            --deep-orange: #e85a24;
+            --soft-orange: rgba(255, 107, 53, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-main: #2d1a12;
+            --text-muted: #8a7b75;
             --white: #ffffff;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         * {
@@ -25,22 +28,39 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-main);
-            color: #1e293b;
+            /* Background gradasi abstrak khas macOS */
+            background: radial-gradient(circle at top right, #fff5f0, #ffe0d1),
+                        linear-gradient(135deg, #ffffff 0%, #ffdbc9 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            height: 100vh;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Layout Structure */
+        /* Layout Structure - Glass Container */
         .admin-layout {
             display: flex;
-            height: 100vh;
-            width: 100vw;
+            height: 94vh;
+            width: 96vw;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px) saturate(160%);
+            -webkit-backdrop-filter: blur(30px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 
+                0 25px 50px -12px rgba(232, 90, 36, 0.15),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
         }
 
-        /* Sidebar Styling */
+        /* Sidebar Styling - Liquid Glass Effect */
         .sidebar {
-            width: 280px;
-            background-color: var(--bg-sidebar);
+            width: 260px;
+            background: rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255, 107, 53, 0.1);
             display: flex;
             flex-direction: column;
             transition: var(--transition);
@@ -48,72 +68,86 @@
         }
 
         .sidebar-header {
-            padding: 30px;
+            padding: 40px 25px;
             display: flex;
-            align-items: center;
-            gap: 12px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
         }
 
         .logo-box {
-            width: 35px;
-            height: 35px;
-            background: var(--primary);
-            border-radius: 10px;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(145deg, var(--titanium-orange), var(--deep-orange));
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 800;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            font-size: 0.9rem;
+            box-shadow: 0 8px 20px rgba(232, 90, 36, 0.3);
         }
 
         .logo-text {
-            color: var(--white);
+            color: var(--text-main);
             font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: -0.5px;
         }
 
         .nav-menu {
             flex: 1;
-            padding: 10px 15px;
+            padding: 0 15px;
             overflow-y: auto;
         }
 
         .nav-label {
             color: var(--text-muted);
-            font-size: 0.7rem;
-            font-weight: 700;
+            font-size: 0.65rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 20px 15px 10px;
+            letter-spacing: 2px;
+            padding: 25px 15px 10px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            padding: 12px 15px;
-            color: var(--text-muted);
+            padding: 12px 18px;
+            color: var(--text-main);
             text-decoration: none;
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 0.9rem;
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .nav-item i { 
+            margin-right: 12px; 
+            font-style: normal; 
+            font-size: 1.1rem;
+            filter: grayscale(1) opacity(0.7);
             transition: var(--transition);
         }
 
-        .nav-item i { margin-right: 12px; font-style: normal; font-size: 1.1rem; }
-
         .nav-item:hover {
-            color: var(--white);
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+            border-color: rgba(255, 107, 53, 0.1);
         }
 
         .nav-item.active {
-            background: var(--primary);
-            color: var(--white);
-            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+            background: var(--white);
+            color: var(--deep-orange);
+            box-shadow: 0 10px 25px -5px rgba(232, 90, 36, 0.15);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .nav-item.active i {
+            filter: grayscale(0) opacity(1);
         }
 
         /* Main Content Styling */
@@ -122,63 +156,86 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .top-navbar {
-            height: 70px;
-            background: var(--white);
-            border-bottom: 1px solid #e2e8f0;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 40px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .breadcrumb span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
         }
 
         .user-profile {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
         }
 
         .avatar {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #818cf8, #4f46e5);
-            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #fff, #ffe0d1);
+            border: 2px solid var(--titanium-orange);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--deep-orange);
             font-weight: 700;
             font-size: 0.8rem;
         }
 
         .content-area {
             flex: 1;
-            padding: 40px;
+            padding: 30px 40px;
             overflow-y: auto;
-            animation: slideUp 0.6s ease-out;
+            scrollbar-width: thin;
+            scrollbar-color: var(--soft-orange) transparent;
         }
 
-        /* Animations */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Anti-Template Card Style */
+        .content-area::-webkit-scrollbar {
+            width: 6px;
         }
 
-        /* Logout Button */
+        /* Logout Button - Minimalist */
         .logout-btn {
             width: 100%;
-            background: none;
+            background: transparent;
             border: none;
-            color: #fb7185;
+            color: var(--text-muted) !important;
             cursor: pointer;
             text-align: left;
-            font-family: inherit;
+            margin-top: 10px;
+            opacity: 0.7;
         }
 
         .logout-btn:hover {
-            background: rgba(251, 113, 133, 0.1);
+            color: #d32f2f !important;
+            background: rgba(211, 47, 47, 0.05) !important;
+            opacity: 1;
+        }
+
+        /* Animasi Lembut */
+        @keyframes liquidAppear {
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .content-area > * {
+            animation: liquidAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
     </style>
 </head>
@@ -187,8 +244,8 @@
 <div class="admin-layout">
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo-box">SK</div>
-            <span class="logo-text">STOREKIT</span>
+            <div class="logo-box">WRPS</div>
+            <span class="logo-text">Warunk PC-Station</span>
         </div>
 
         <nav class="nav-menu">
@@ -197,10 +254,10 @@
             <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i>📊</i> Dashboard
             </a>
-            
+<!--             
             <a href="{{ route('admin.categories.index') }}" class="nav-item {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                 <i>📁</i> Kategori
-            </a>
+            </a> -->
             
             <a href="{{ route('admin.products.index') }}" class="nav-item {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
                 <i>📦</i> Produk
@@ -214,7 +271,7 @@
                 <i>🛒</i> Pesanan
             </a>
 
-            <div class="nav-label" style="margin-top:20px;">System</div>
+            <div class="nav-label">System</div>
 
             <a href="{{ route('shop.index') }}" class="nav-item">
                 <i>🌐</i> Lihat Toko
@@ -232,16 +289,16 @@
     <div class="main-container">
         <header class="top-navbar">
             <div class="breadcrumb">
-                <span style="color: var(--text-muted); font-size: 0.85rem;">Admin /</span> 
-                <span style="font-weight: 700; font-size: 0.85rem; margin-left: 5px;">
+                <span>Admin /</span> 
+                <span style="font-weight: 700; color: var(--text-main); margin-left: 5px;">
                     {{ ucfirst(str_replace('.', ' ', request()->route()->getName())) }}
                 </span>
             </div>
 
             <div class="user-profile">
                 <div style="text-align: right;">
-                    <p style="font-size: 0.85rem; font-weight: 700;">{{ Auth::user()->name }}</p>
-                    <p style="font-size: 0.7rem; color: var(--text-muted);">Super Admin</p>
+                    <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-main);">{{ Auth::user()->name }}</p>
+                    <p style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">SUPER ADMIN</p>
                 </div>
                 <div class="avatar">{{ substr(Auth::user()->name, 0, 2) }}</div>
             </div>

@@ -3,150 +3,233 @@
 @section('content')
 
 <style>
-    .product-detail-container {
-        max-width: 1100px;
-        margin: 40px auto;
-        padding: 0 20px;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    :root {
+        --titanium-orange: #ff6b35;
+        --deep-titanium: #e85a24;
+        --charcoal: #1d1d1f;
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.5);
     }
 
+    .product-detail-container {
+        max-width: 1200px;
+        margin: 60px auto;
+        padding: 0 30px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* 1. LAYOUT FLEX - Cinematic Split */
     .product-flex {
         display: flex;
-        gap: 50px;
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        border: 1px solid #f0f0f0;
+        gap: 80px;
+        align-items: flex-start;
     }
 
-    /* Left Side: Image */
+    /* 2. LEFT SIDE: GALLERY - Sticky Showcase */
     .product-gallery {
-        flex: 1;
-        max-width: 500px;
+        flex: 1.2;
+        position: sticky;
+        top: 120px;
+        animation: slideFromLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .main-image-wrap {
+        background: #f5f5f7;
+        border-radius: 50px;
+        padding: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(0,0,0,0.02);
+        transition: transform 0.5s ease;
+    }
+
+    .main-image-wrap:hover {
+        transform: scale(1.02);
     }
 
     .main-image {
         width: 100%;
-        border-radius: 15px;
-        object-fit: cover;
-        background-color: #f8fafc;
-        border: 1px solid #edf2f7;
+        max-height: 550px;
+        object-fit: contain;
+        filter: drop-shadow(0 20px 40px rgba(0,0,0,0.08));
     }
 
-    /* Right Side: Content */
+    /* 3. RIGHT SIDE: CONTENT - Elegant Info */
     .product-info-section {
         flex: 1;
-        display: flex;
-        flex-direction: column;
+        animation: fadeIn 1s ease-out;
     }
 
-    .product-category-tag {
-        color: #4f46e5;
+    .category-badge {
+        display: inline-block;
         font-size: 0.85rem;
-        font-weight: 700;
+        font-weight: 800;
+        color: var(--titanium-orange);
         text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 10px;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
     }
 
     .product-name-title {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #1a202c;
-        margin-bottom: 15px;
-        line-height: 1.2;
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: var(--charcoal);
+        line-height: 1;
+        letter-spacing: -3px;
+        margin-bottom: 25px;
+    }
+
+    .price-box {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 35px;
+    }
+
+    .price-symbol {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #86868b;
     }
 
     .product-price-large {
-        font-size: 1.75rem;
-        color: #4f46e5;
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: var(--charcoal);
+        letter-spacing: -1.5px;
+    }
+
+    /* Stock & Badges */
+    .meta-badges {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 40px;
+    }
+
+    .badge-item {
+        padding: 8px 18px;
+        border-radius: 14px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .available { background: #e8f5e9; color: #2e7d32; }
+    .unavailable { background: #ffebee; color: #c62828; }
+    .titanium-badge { background: #f2f2f7; color: var(--charcoal); border: 1px solid #d1d1d6; }
+
+    /* Description */
+    .description-wrap h3 {
+        font-size: 1.1rem;
         font-weight: 800;
-        margin-bottom: 25px;
+        margin-bottom: 15px;
     }
 
     .description-text {
-        color: #4a5568;
-        line-height: 1.7;
-        margin-bottom: 30px;
-        font-size: 1.05rem;
+        color: #6e6e73;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        margin-bottom: 45px;
     }
-
-    .stock-badge {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 25px;
-    }
-
-    .stock-available { background: #dcfce7; color: #166534; }
-    .stock-empty { background: #fee2e2; color: #991b1b; }
 
     /* Variations */
-    .variation-group {
-        margin-bottom: 25px;
+    .variation-card {
+        background: #fbfbfd;
+        border-radius: 25px;
+        padding: 25px;
+        margin-bottom: 45px;
+        border: 1px solid #f0f0f2;
     }
 
-    .variation-group label {
+    .variation-card label {
         display: block;
-        font-weight: 700;
-        font-size: 0.9rem;
-        margin-bottom: 10px;
-        color: #2d3748;
+        font-weight: 800;
+        font-size: 0.85rem;
+        color: #1d1d1f;
+        margin-bottom: 15px;
+        text-transform: uppercase;
     }
 
     .custom-select {
         width: 100%;
-        max-width: 300px;
-        padding: 12px;
-        border: 2px solid #e2e8f0;
-        border-radius: 10px;
+        padding: 15px 20px;
+        border: 2px solid #e5e5e7;
+        border-radius: 15px;
+        font-weight: 600;
         font-family: inherit;
         background: white;
+        appearance: none;
+        cursor: pointer;
+        transition: 0.3s;
     }
 
-    /* Action Buttons */
+    .custom-select:focus {
+        border-color: var(--titanium-orange);
+        outline: none;
+    }
+
+    /* 4. ACTION BUTTONS - High Intensity */
     .action-container {
-        margin-top: auto;
-        padding-top: 30px;
-        border-top: 1px solid #edf2f7;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
     }
 
-    .btn-add-cart {
-        background: #4f46e5;
+    .btn-add-cart-titanium {
+        background: linear-gradient(135deg, var(--titanium-orange), var(--deep-titanium));
         color: white;
         border: none;
-        padding: 18px 35px;
-        border-radius: 12px;
-        font-weight: 700;
+        padding: 25px;
+        border-radius: 24px;
         font-size: 1.1rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         cursor: pointer;
-        width: 100%;
-        transition: all 0.3s;
-        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 20px 40px rgba(232, 90, 36, 0.25);
     }
 
-    .btn-add-cart:hover {
-        background: #4338ca;
-        transform: translateY(-2px);
+    .btn-add-cart-titanium:hover {
+        transform: translateY(-5px);
+        filter: brightness(1.1);
+        box-shadow: 0 25px 50px rgba(232, 90, 36, 0.4);
     }
 
-    .btn-login-redirect {
+    .btn-disabled {
+        background: #e5e5e7;
+        color: #a1a1a6;
+        cursor: not-allowed;
+        box-shadow: none !important;
+    }
+
+    .btn-login-modern {
         display: block;
         text-align: center;
-        background: #f1f5f9;
-        color: #475569;
+        background: var(--charcoal);
+        color: white;
         text-decoration: none;
-        padding: 15px;
-        border-radius: 10px;
-        font-weight: 600;
+        padding: 22px;
+        border-radius: 24px;
+        font-weight: 800;
+        transition: 0.3s;
     }
 
-    @media (max-width: 850px) {
-        .product-flex { flex-direction: column; padding: 20px; }
-        .product-gallery { max-width: 100%; }
+    /* Animations */
+    @keyframes slideFromLeft {
+        from { opacity: 0; transform: translateX(-50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1000px) {
+        .product-flex { flex-direction: column; gap: 40px; }
+        .product-gallery { position: relative; top: 0; width: 100%; }
+        .product-name-title { font-size: 2.5rem; }
     }
 </style>
 
@@ -154,39 +237,56 @@
     <div class="product-flex">
         
         <div class="product-gallery">
-            @if($product->image)
-                <img src="{{ asset('storage/'.$product->image) }}" class="main-image" alt="{{ $product->name }}">
-            @else
-                <div class="main-image" style="height: 400px; display: flex; align-items: center; justify-content: center; color: #cbd5e0;">
-                    No Image Available
-                </div>
-            @endif
+            <div class="main-image-wrap">
+                @if($product->image)
+                    <img src="{{ asset('storage/'.$product->image) }}" class="main-image" alt="{{ $product->name }}">
+                @else
+                    <div style="font-size: 5rem;">🔌</div>
+                @endif
+            </div>
+            <p style="text-align: center; margin-top: 20px; color: #86868b; font-size: 0.8rem; font-weight: 600;">
+                 Titanium Grade Certified Component
+            </p>
         </div>
 
         <div class="product-info-section">
-            <span class="product-category-tag">{{ $product->category->name ?? 'Gadget' }}</span>
+            <span class="category-badge">{{ $product->category->name ?? 'Next-Gen Gear' }}</span>
             <h2 class="product-name-title">{{ $product->name }}</h2>
             
-            <div class="product-price-large">
-                Rp {{ number_format($product->price, 0, ',', '.') }}
+            <div class="price-box">
+                <span class="price-symbol">IDR</span>
+                <div class="product-price-large">
+                    {{ number_format($product->price, 0, ',', '.') }}
+                </div>
             </div>
 
-            <span class="stock-badge {{ $product->stock > 0 ? 'stock-available' : 'stock-empty' }}">
-                {{ $product->stock > 0 ? 'Stok Tersedia: ' . $product->stock : 'Stok Habis' }}
-            </span>
+            <div class="meta-badges">
+                <span class="badge-item {{ $product->stock > 0 ? 'available' : 'unavailable' }}">
+                    {{ $product->stock > 0 ? '● In Stock (' . $product->stock . ')' : '○ Out of Stock' }}
+                </span>
+                <span class="badge-item titanium-badge">17-PRO-SERIES</span>
+            </div>
 
-            <p class="description-text">
-                {{ $product->description }}
-            </p>
+            <div class="description-wrap">
+                <h3>About this hardware</h3>
+                <p class="description-text">
+                    {{ $product->description }}
+                </p>
+            </div>
 
             @if($product->colors)
-                <div class="variation-group">
-                    <label>Pilih Warna</label>
-                    <select class="custom-select">
-                        @foreach($product->colors as $color)
-                            <option value="{{ $color }}">{{ $color }}</option>
-                        @endforeach
-                    </select>
+                <div class="variation-card">
+                    <label>Hardware Configuration / Color</label>
+                    <div style="position: relative;">
+                        <select class="custom-select">
+                            @foreach($product->colors as $color)
+                                <option value="{{ $color }}">{{ $color }}</option>
+                            @endforeach
+                        </select>
+                        <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                            ▼
+                        </div>
+                    </div>
                 </div>
             @endif
 
@@ -195,20 +295,23 @@
                     @if($product->stock > 0)
                         <form action="{{ route('cart.add', $product->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn-add-cart">
-                                🛒 Tambah ke Keranjang
+                            <button type="submit" class="btn-add-cart-titanium">
+                                Add to Systems Cart
                             </button>
                         </form>
                     @else
-                        <button class="btn-add-cart" style="background: #cbd5e0; cursor: not-allowed; box-shadow: none;">
-                            Stok Tidak Tersedia
+                        <button class="btn-add-cart-titanium btn-disabled">
+                            Currently Unavailable
                         </button>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" class="btn-login-redirect">
-                        🔒 Login untuk Membeli Produk
+                    <a href="{{ route('login') }}" class="btn-login-modern">
+                        Sign In to Purchase
                     </a>
                 @endauth
+                <p style="text-align: center; font-size: 0.75rem; color: #86868b; margin-top: 10px;">
+                    Free shipping for Titanium Member. Secure payment guaranteed.
+                </p>
             </div>
         </div>
 

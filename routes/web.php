@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\CheckoutController;
@@ -13,6 +12,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\SetupController;
 use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +60,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{order}', [UserOrderController::class, 'show'])->name('show');
         Route::post('/{order}/complete', [UserOrderController::class, 'complete'])->name('complete');
     });
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
 
@@ -88,5 +92,9 @@ Route::middleware(['auth', 'isAdmin'])
             [AdminOrderController::class, 'updateLogistic']
         )->name('orders.updateLogistic');
 });
+
+
+
+
 
 require __DIR__.'/auth.php';

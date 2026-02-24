@@ -3,310 +3,207 @@
 @section('content')
 
 <style>
+    :root {
+        --titanium-orange: #ff6b35;
+        --deep-titanium: #e85a24;
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.5);
+        --text-dark: #1a1a1a;
+        --success-green: #34c759; /* Apple Success Green */
+    }
+
     .success-wrapper {
-        max-width: 500px;
-        margin: 60px auto;
-        padding: 0 20px;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        text-align: center;
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 0 25px;
+        perspective: 1000px;
     }
 
     .success-card {
-        background: #ffffff;
-        padding: 40px 30px;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-        border: 1px solid #eef2f7;
+        background: var(--glass-bg);
+        backdrop-filter: blur(30px) saturate(180%);
+        -webkit-backdrop-filter: blur(30px) saturate(180%);
+        padding: 60px 40px;
+        border-radius: 50px;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 40px 100px rgba(255, 107, 53, 0.1);
+        text-align: center;
+        animation: cardEntrance 1s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Icon Checkmark */
+    /* Animated Icon Section */
+    .icon-box {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 35px;
+    }
+
     .icon-circle {
-        width: 80px;
-        height: 80px;
-        background-color: #dcfce7;
-        color: #166534;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--titanium-orange), var(--deep-titanium));
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 40px;
-        margin: 0 auto 25px;
-        animation: scaleIn 0.5s ease-out;
+        font-size: 45px;
+        color: white;
+        box-shadow: 0 20px 40px rgba(232, 90, 36, 0.3);
+        animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    @keyframes scaleIn {
-        0% { transform: scale(0); }
-        80% { transform: scale(1.1); }
-        100% { transform: scale(1); }
-    }
-
+    /* Success Header */
     h2 {
-        color: #1a202c;
-        font-size: 1.8rem;
-        font-weight: 800;
-        margin-bottom: 10px;
+        font-size: 2.8rem;
+        font-weight: 900;
+        letter-spacing: -2px;
+        color: var(--text-dark);
+        margin: 0 0 15px 0;
+        line-height: 1;
     }
 
     .message {
-        color: #64748b;
-        font-size: 1rem;
-        margin-bottom: 30px;
-        line-height: 1.5;
+        color: #86868b;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 40px;
+        line-height: 1.6;
     }
 
-    /* Order Details Box */
-    .order-info {
-        background-color: #f8fafc;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 30px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
+    /* Minimalist Order Info */
+    .order-status-panel {
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: 30px;
+        padding: 25px;
+        margin-bottom: 40px;
+        border: 1px solid rgba(0, 0, 0, 0.02);
     }
 
-    .info-row {
+    .status-row {
         display: flex;
         justify-content: space-between;
-        font-size: 0.9rem;
+        align-items: center;
+        margin-bottom: 12px;
     }
+    .status-row:last-child { margin-bottom: 0; }
 
-    .info-label { color: #94a3b8; }
-    .info-value { color: #1e293b; font-weight: 600; }
-
-    .status-badge {
-        background: #4f46e5;
-        color: white;
-        padding: 2px 10px;
-        border-radius: 20px;
-        font-size: 0.8rem;
+    .status-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #a1a1a6;
         text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
-    /* Buttons */
-    .btn-group {
+    .status-value {
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--text-dark);
+    }
+
+    .badge-paid {
+        background: var(--success-green);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Buttons Group */
+    .action-group {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 15px;
     }
 
-    .btn-primary {
-        background: #4f46e5;
+    .btn-track {
+        background: var(--text-dark);
         color: white;
         text-decoration: none;
-        padding: 14px;
-        border-radius: 10px;
-        font-weight: 700;
-        transition: all 0.3s;
+        padding: 22px;
+        border-radius: 22px;
+        font-weight: 800;
+        font-size: 1rem;
+        transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
     }
 
-    .btn-primary:hover {
-        background: #4338ca;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+    .btn-track:hover {
+        transform: translateY(-5px);
+        background: #000;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     }
 
-    .btn-secondary {
-        color: #64748b;
+    .btn-continue {
+        color: var(--deep-titanium);
         text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
+        font-size: 0.95rem;
+        font-weight: 700;
+        padding: 10px;
+        transition: 0.3s;
     }
 
-    .btn-secondary:hover {
-        color: #1e293b;
+    .btn-continue:hover {
+        opacity: 0.7;
+    }
+
+    /* Animations */
+    @keyframes cardEntrance {
+        from { opacity: 0; transform: translateY(60px) rotateX(-10deg); }
+        to { opacity: 1; transform: translateY(0) rotateX(0); }
+    }
+
+    @keyframes bounceIn {
+        0% { transform: scale(0); opacity: 0; }
+        60% { transform: scale(1.15); opacity: 1; }
+        100% { transform: scale(1); }
     }
 </style>
 
 <div class="success-wrapper">
     <div class="success-card">
-        <div class="icon-circle">
-            ✓
+        <div class="icon-box">
+            <div class="icon-circle">
+                ✓
+            </div>
         </div>
 
-        <h2>Pembayaran Berhasil!</h2>
+        <h2>Confirmed.</h2>
         <p class="message">
-            Pesanan Anda telah kami terima dan akan segera diproses. 
-            Terima kasih telah mempercayai layanan kami.
+            Your hardware journey begins now. We've received your payment and our technicians are preparing your setup.
         </p>
 
-        <div class="order-info">
-            <div class="info-row">
-                <span class="info-label">No. Invoice</span>
-                <span class="info-value">#{{ $order->invoice }}</span>
+        <div class="order-status-panel">
+            <div class="status-row">
+                <span class="status-label">Reference</span>
+                <span class="status-value">#{{ $order->invoice }}</span>
             </div>
-            <div class="info-row">
-                <span class="info-label">Status Pesanan</span>
-                <span class="info-value">
-                    <span class="status-badge">{{ $order->status }}</span>
+            <div class="status-row">
+                <span class="status-label">Payment Status</span>
+                <span class="status-value">
+                    <span class="badge-paid">SECURED</span>
                 </span>
             </div>
+            <div class="status-row">
+                <span class="status-label">Order Status</span>
+                <span class="status-value" style="color: var(--titanium-orange);">{{ strtoupper($order->status) }}</span>
+            </div>
         </div>
 
-        <div class="btn-group">
-            <a href="{{ route('user.orders.index') }}" class="btn-primary">
-                Cek Status Pesanan
+        <div class="action-group">
+            <a href="{{ route('user.orders.index') }}" class="btn-track">
+                Track My Order
             </a>
-            <a href="{{ route('shop.index') }}" class="btn-secondary">
-                Kembali Belanja
+            <a href="{{ route('shop.index') }}" class="btn-continue">
+                Continue Shopping &rarr;
             </a>
         </div>
-    </div>
-</div>
 
-@endsection@extends('layouts.app')
-
-@section('content')
-
-<style>
-    .success-wrapper {
-        max-width: 500px;
-        margin: 60px auto;
-        padding: 0 20px;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        text-align: center;
-    }
-
-    .success-card {
-        background: #ffffff;
-        padding: 40px 30px;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-        border: 1px solid #eef2f7;
-    }
-
-    /* Icon Checkmark */
-    .icon-circle {
-        width: 80px;
-        height: 80px;
-        background-color: #dcfce7;
-        color: #166534;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 40px;
-        margin: 0 auto 25px;
-        animation: scaleIn 0.5s ease-out;
-    }
-
-    @keyframes scaleIn {
-        0% { transform: scale(0); }
-        80% { transform: scale(1.1); }
-        100% { transform: scale(1); }
-    }
-
-    h2 {
-        color: #1a202c;
-        font-size: 1.8rem;
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
-
-    .message {
-        color: #64748b;
-        font-size: 1rem;
-        margin-bottom: 30px;
-        line-height: 1.5;
-    }
-
-    /* Order Details Box */
-    .order-info {
-        background-color: #f8fafc;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 30px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .info-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.9rem;
-    }
-
-    .info-label { color: #94a3b8; }
-    .info-value { color: #1e293b; font-weight: 600; }
-
-    .status-badge {
-        background: #4f46e5;
-        color: white;
-        padding: 2px 10px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-    }
-
-    /* Buttons */
-    .btn-group {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .btn-primary {
-        background: #4f46e5;
-        color: white;
-        text-decoration: none;
-        padding: 14px;
-        border-radius: 10px;
-        font-weight: 700;
-        transition: all 0.3s;
-    }
-
-    .btn-primary:hover {
-        background: #4338ca;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
-    }
-
-    .btn-secondary {
-        color: #64748b;
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
-    .btn-secondary:hover {
-        color: #1e293b;
-    }
-</style>
-
-<div class="success-wrapper">
-    <div class="success-card">
-        <div class="icon-circle">
-            ✓
-        </div>
-
-        <h2>Pembayaran Berhasil!</h2>
-        <p class="message">
-            Pesanan Anda telah kami terima dan akan segera diproses. 
-            Terima kasih telah mempercayai layanan kami.
+        <p style="margin-top: 40px; font-size: 0.75rem; color: #c1c1c6; font-weight: 600;">
+            A confirmation email has been sent to your registered account.
         </p>
-
-        <div class="order-info">
-            <div class="info-row">
-                <span class="info-label">No. Invoice</span>
-                <span class="info-value">#{{ $order->invoice }}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Status Pesanan</span>
-                <span class="info-value">
-                    <span class="status-badge">{{ $order->status }}</span>
-                </span>
-            </div>
-        </div>
-
-        <div class="btn-group">
-            <a href="{{ route('user.orders.index') }}" class="btn-primary">
-                Cek Status Pesanan
-            </a>
-            <a href="{{ route('shop.index') }}" class="btn-secondary">
-                Kembali Belanja
-            </a>
-        </div>
     </div>
 </div>
 

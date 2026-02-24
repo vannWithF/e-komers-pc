@@ -3,173 +3,230 @@
 @section('content')
 
 <style>
-    .order-detail-container {
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 0 20px;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    :root {
+        --titanium-orange: #ff6b35;
+        --deep-titanium: #e85a24;
+        --charcoal: #121212;
+        --soft-bg: #f5f5f7;
     }
 
+    .order-detail-container {
+        max-width: 850px;
+        margin: 60px auto;
+        padding: 0 25px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* 1. PAPER EFFECT CARD */
+    .receipt-paper {
+        background: white;
+        border-radius: 40px;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.04);
+        border: 1px solid #f0f0f2;
+        overflow: hidden;
+        position: relative;
+        animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Decorative Circle Cutouts (Efek Tiket) */
+    .receipt-paper::before, .receipt-paper::after {
+        content: "";
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: var(--soft-bg); /* Sesuai warna background body */
+        border-radius: 50%;
+        top: 175px; /* Sesuaikan dengan posisi dashed line */
+        z-index: 2;
+    }
+    .receipt-paper::before { left: -15px; }
+    .receipt-paper::after { right: -15px; }
+
+    /* 2. HEADER SECTION */
     .order-header {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 16px 16px 0 0;
-        border: 1px solid #edf2f7;
-        border-bottom: none;
+        padding: 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        background: linear-gradient(to bottom, #fbfbfd, white);
+    }
+
+    .invoice-brand h1 {
+        font-size: 2.2rem;
+        font-weight: 900;
+        letter-spacing: -2px;
+        color: var(--charcoal);
+        margin: 0;
+    }
+
+    .invoice-brand span { color: var(--titanium-orange); }
+
+    .status-badge-titanium {
+        padding: 10px 24px;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: var(--charcoal);
+        color: white;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    /* 3. DASHED DIVIDER */
+    .receipt-divider {
+        margin: 0 30px;
+        border-top: 2px dashed #f0f0f2;
+        position: relative;
+    }
+
+    /* 4. TABLE SECTION */
+    .table-wrapper { padding: 40px 50px; }
+    
+    table { width: 100%; border-collapse: collapse; }
+    
+    th {
+        text-align: left;
+        padding-bottom: 20px;
+        font-size: 0.75rem;
+        color: #aeaeae;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 800;
+    }
+
+    td {
+        padding: 25px 0;
+        border-bottom: 1px solid #f5f5f7;
+        color: var(--charcoal);
+        font-size: 1rem;
+    }
+
+    .item-info h4 { margin: 0; font-weight: 800; font-size: 1.1rem; }
+    .item-info span { font-size: 0.85rem; color: #86868b; font-weight: 600; }
+
+    .price-col { font-weight: 800; text-align: right; }
+
+    /* 5. SUMMARY FOOTER */
+    .order-footer {
+        padding: 40px 50px 60px;
+        background: #fbfbfd;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
-    .order-header h2 {
-        margin: 0;
-        font-size: 1.25rem;
-        color: #1a202c;
-    }
+    .summary-box { text-align: left; }
+    .summary-label { font-size: 0.9rem; color: #86868b; font-weight: 600; display: block; }
+    .total-value { font-size: 2.5rem; font-weight: 900; color: var(--charcoal); letter-spacing: -2px; }
+    .total-value span { font-size: 1.2rem; color: #aeaeae; margin-right: 5px; }
 
-    .status-badge {
-        padding: 6px 16px;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        background: #ebf8ff;
-        color: #2b6cb0;
-    }
-
-    /* Table Section */
-    .table-wrapper {
-        background: white;
-        border: 1px solid #edf2f7;
-        overflow: hidden;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th {
-        background: #f8fafc;
-        text-align: left;
-        padding: 15px 20px;
-        font-size: 0.8rem;
-        color: #718096;
-        text-transform: uppercase;
-    }
-
-    td {
-        padding: 20px;
-        border-top: 1px solid #f1f5f9;
-        color: #2d3748;
-    }
-
-    .subtotal-text {
-        font-weight: 700;
-        color: #1a202c;
-    }
-
-    /* Footer & Action */
-    .order-footer {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 0 0 16px 16px;
-        border: 1px solid #edf2f7;
-        border-top: none;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-    }
-
-    .total-summary {
-        margin-bottom: 20px;
-        text-align: right;
-    }
-
-    .total-summary p {
-        margin: 5px 0;
-        color: #718096;
-    }
-
-    .total-summary h3 {
-        margin: 10px 0;
-        font-size: 1.5rem;
-        color: #4f46e5;
-    }
-
-    .btn-complete {
-        background: #10b981;
+    /* 6. BUTTON ACTION */
+    .btn-confirm-titanium {
+        background: var(--titanium-orange);
         color: white;
         border: none;
-        padding: 14px 30px;
-        border-radius: 10px;
-        font-weight: 700;
+        padding: 20px 35px;
+        border-radius: 20px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         cursor: pointer;
-        transition: all 0.2s;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 15px 30px rgba(255, 107, 53, 0.25);
     }
 
-    .btn-complete:hover {
-        background: #059669;
-        transform: translateY(-2px);
+    .btn-confirm-titanium:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 20px 40px rgba(255, 107, 53, 0.4);
+        filter: brightness(1.1);
+    }
+
+    /* Animations */
+    @keyframes slideUpFade {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 640px) {
-        .order-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-        .order-footer { align-items: center; }
+        .order-header { flex-direction: column; gap: 20px; padding: 30px; }
+        .order-footer { flex-direction: column; gap: 30px; text-align: center; }
+        .total-value { font-size: 2rem; }
     }
 </style>
 
 <div class="order-detail-container">
-    <div class="order-header">
-        <div>
-            <p style="color: #718096; margin-bottom: 5px; font-size: 0.9rem;">Invoice</p>
-            <h2>#{{ $order->invoice }}</h2>
+    <div class="receipt-paper">
+        
+        <div class="order-header">
+            <div class="invoice-brand">
+                <p style="font-weight: 800; color: var(--titanium-orange); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;">Hardware Shipment</p>
+                <h1>INV<span>.</span>#{{ $order->invoice }}</h1>
+                <p style="color: #86868b; font-size: 0.9rem; font-weight: 600; margin-top: 5px;">Issued on {{ $order->created_at->format('d M Y') }}</p>
+            </div>
+            <div class="status-badge-titanium">
+                {{ $order->status }}
+            </div>
         </div>
-        <span class="status-badge">
-            {{ $order->status }}
-        </span>
-    </div>
 
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>Produk</th>
-                    <th>Harga</th>
-                    <th>Qty</th>
-                    <th style="text-align: right;">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($order->items as $item)
+        <div class="receipt-divider"></div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
                     <tr>
-                        <td style="font-weight: 600;">{{ $item->product->name }}</td>
-                        <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
-                        <td>{{ $item->quantity }}</td>
-                        <td style="text-align: right;" class="subtotal-text">
-                            Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}
-                        </td>
+                        <th>Hardware Unit</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th style="text-align: right;">Amount</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-
-    <div class="order-footer">
-        <div class="total-summary">
-            <p>Ongkos Kirim: <strong>Rp 20.000</strong></p>
-            <h3>Total: Rp {{ number_format($order->total_price, 0, ',', '.') }}</h3>
+                </thead>
+                <tbody>
+                    @foreach($order->items as $item)
+                        <tr>
+                            <td>
+                                <div class="item-info">
+                                    <h4>{{ $item->product->name }}</h4>
+                                    <span>Base Price: Rp {{ number_format($item->price, 0, ',', '.') }}</span>
+                                </div>
+                            </td>
+                            <td style="text-align: center; font-weight: 800; color: #86868b;">
+                                {{ $item->quantity }}
+                            </td>
+                            <td class="price-col">
+                                Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
 
-        @if($order->status === 'shipped')
-            <form action="{{ route('user.orders.complete', $order->id) }}" method="POST">
-                @csrf
-                <button type="submit" class="btn-complete">
-                    Konfirmasi Barang Diterima
-                </button>
-            </form>
-        @endif
+        <div class="order-footer">
+            <div class="summary-box">
+                <span class="summary-label">Total Investment</span>
+                <div class="total-value">
+                    <span>IDR</span>{{ number_format($order->total_price, 0, ',', '.') }}
+                </div>
+                <p style="font-size: 0.75rem; color: #aeaeae; font-weight: 700; margin-top: 5px;">
+                    *Includes logistic tax & titanium protection
+                </p>
+            </div>
+
+            @if($order->status === 'shipped')
+                <form action="{{ route('user.orders.complete', $order->id) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-confirm-titanium">
+                        Verify Delivery
+                    </button>
+                </form>
+            @endif
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{{ route('user.orders.index') }}" style="text-decoration: none; color: #aeaeae; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;">
+            ← Return to Fleet Logs
+        </a>
     </div>
 </div>
 

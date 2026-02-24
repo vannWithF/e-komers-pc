@@ -10,6 +10,7 @@ class Setup extends Model
         'name',
         'description',
         'image',
+        'price',
         'is_active'
     ];
 

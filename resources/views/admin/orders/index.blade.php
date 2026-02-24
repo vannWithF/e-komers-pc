@@ -4,179 +4,183 @@
 
 <style>
     :root {
-        --primary: #4f46e5;
-        --text-main: #1e293b;
-        --text-muted: #64748b;
-        --bg-body: #f8fafc;
+        --titanium-orange: #ff6b35;
+        --deep-orange: #e85a24;
+        --glass-bg: rgba(255, 255, 255, 0.25);
+        --glass-border: rgba(255, 255, 255, 0.5);
+        --text-main: #2d1a12;
+        --text-muted: #8a7b75;
     }
 
+    /* Layout Header yang lebih lega */
     .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 25px;
+        margin-bottom: 40px;
+        padding: 0 10px;
     }
 
     .page-title {
-        font-size: 1.5rem;
-        font-weight: 800;
+        font-size: 2.2rem;
+        font-weight: 900;
         color: var(--text-main);
-        letter-spacing: -0.5px;
+        letter-spacing: -1.5px;
+        background: linear-gradient(to right, var(--text-main), var(--titanium-orange));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
-    /* Table Card */
-    .table-card {
-        background: white;
-        border-radius: 16px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    /* STRUKTUR BARU: Grid Card Flow (Bukan Tabel Baris) */
+    .order-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* List view tapi berbentuk Card */
+        gap: 20px;
+        animation: liquidAppear 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .order-item-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(25px) saturate(160%);
+        -webkit-backdrop-filter: blur(25px) saturate(160%);
+        border: 1px solid var(--glass-border);
+        border-radius: 35px; /* Lebih bulat */
+        padding: 25px 35px;
+        display: grid;
+        grid-template-columns: 1.2fr 1.5fr 1fr 1fr 0.8fr; /* Pembagian kolom horizontal */
+        align-items: center;
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        position: relative;
         overflow: hidden;
-        animation: slideUp 0.5s ease;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
+    /* Efek air saat hover */
+    .order-item-card:hover {
+        transform: translateY(-5px) scale(1.01);
+        background: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 20px 40px rgba(232, 90, 36, 0.08);
+        border-color: var(--titanium-orange);
     }
 
-    thead th {
-        background: #f8fafc;
-        padding: 16px 20px;
+    /* Desain Informasi Order */
+    .info-group { display: flex; flex-direction: column; gap: 4px; }
+    .info-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
+    .info-value { font-weight: 700; color: var(--text-main); font-size: 1rem; }
+    
+    .invoice-tag {
+        background: white;
+        color: var(--deep-orange);
+        padding: 6px 15px;
+        border-radius: 15px;
+        font-weight: 900;
+        font-size: 0.85rem;
+        display: inline-block;
+        box-shadow: 0 4px 10px rgba(232, 90, 36, 0.1);
+    }
+
+    /* Badge & Status Custom */
+    .status-pill {
+        padding: 8px 18px;
+        border-radius: 20px;
         font-size: 0.75rem;
+        font-weight: 800;
+        width: fit-content;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .status-paid { background: var(--titanium-orange); color: white; box-shadow: 0 8px 15px rgba(255, 107, 51, 0.3); }
+    .status-pending { background: rgba(255,255,255,0.6); color: var(--text-muted); }
+    
+    /* Tombol Action Modern melayang */
+    .manage-btn {
+        background: var(--text-main);
+        color: white;
+        text-decoration: none;
+        padding: 12px 25px;
+        border-radius: 22px;
+        font-size: 0.8rem;
         font-weight: 700;
+        text-align: center;
+        transition: 0.4s;
+        border: 1px solid transparent;
+    }
+
+    .manage-btn:hover {
+        background: transparent;
+        color: var(--text-main);
+        border-color: var(--text-main);
+    }
+
+    @keyframes liquidAppear {
+        from { opacity: 0; transform: translateY(40px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Header Tabel "Palsu" untuk deskripsi kolom */
+    .list-header {
+        display: grid;
+        grid-template-columns: 1.2fr 1.5fr 1fr 1fr 0.8fr;
+        padding: 0 35px 15px;
+        font-size: 0.7rem;
+        font-weight: 800;
         text-transform: uppercase;
         color: var(--text-muted);
-        letter-spacing: 0.05em;
-        border-bottom: 1px solid #e2e8f0;
+        letter-spacing: 1.5px;
     }
 
-    tbody td {
-        padding: 18px 20px;
-        font-size: 0.9rem;
-        color: var(--text-main);
-        border-bottom: 1px solid #f1f5f9;
-        transition: 0.2s;
-    }
-
-    tbody tr:hover td {
-        background-color: #fcfcfd;
-    }
-
-    /* Badge System */
-    .badge-pill {
-        padding: 5px 12px;
-        border-radius: 50px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    /* Payment Status */
-    .pay-pending { background: #fffbeb; color: #b45309; }
-    .pay-paid { background: #f0fdf4; color: #15803d; }
-    .pay-shipped { background: #eff6ff; color: #1d4ed8; }
-
-    /* Logistic Status */
-    .log-processing { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-    .log-shipped { background: #e0e7ff; color: #4338ca; }
-    .log-delivered { background: #dcfce7; color: #166534; }
-    .log-completed { background: #059669; color: #ffffff; }
-
-    /* Action Button */
-    .btn-action {
-        text-decoration: none;
-        background: white;
-        color: var(--text-main);
-        padding: 8px 16px;
-        border-radius: 10px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        border: 1px solid #e2e8f0;
-        transition: 0.3s;
-        display: inline-flex;
-        align-items: center;
-    }
-
-    .btn-action:hover {
-        background: var(--primary);
-        color: white;
-        border-color: var(--primary);
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-    }
-
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .pagination-container {
-        margin-top: 25px;
+    @media (max-width: 1000px) {
+        .order-item-card, .list-header { grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-header { display: none; }
+        .manage-btn { grid-column: span 2; }
     }
 </style>
 
 <div class="page-header">
-    <h2 class="page-title">Order Management</h2>
-    <div style="font-size: 0.85rem; color: var(--text-muted);">
-        Total: <strong>{{ $orders->total() }} Orders</strong>
-    </div>
+    <h2 class="page-title">Order Stream</h2>
+    <p style="color: var(--text-muted); font-weight: 600; margin-top: 5px;">Manage your store transactions with liquid flow interface.</p>
 </div>
 
-<div class="table-card">
-    <table>
-        <thead>
-            <tr>
-                <th>Invoice</th>
-                <th>Customer</th>
-                <th>Total Price</th>
-                <th>Payment</th>
-                <th>Logistics</th>
-                <th style="text-align: right;">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($orders as $order)
-                <tr>
-                    <td>
-                        <span style="font-weight: 800; color: var(--primary);">#{{ $order->invoice }}</span>
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
-                            {{ $order->created_at->format('d M Y') }}
-                        </div>
-                    </td>
-                    <td>
-                        <div style="font-weight: 700;">{{ $order->user->name }}</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">ID: {{ $order->user_id }}</div>
-                    </td>
-                    <td>
-                        <span style="font-weight: 800;">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
-                    </td>
-                    <td>
-                        <span class="badge-pill {{ $order->status == 'paid' ? 'pay-paid' : ($order->status == 'shipped' ? 'pay-shipped' : 'pay-pending') }}">
-                            ● {{ ucfirst($order->status) }}
-                        </span>
-                    </td>
-                    <td>
-                        @php
-                            $logClass = 'log-processing';
-                            if($order->logistic_status == 'shipped') $logClass = 'log-shipped';
-                            if($order->logistic_status == 'delivered') $logClass = 'log-delivered';
-                            if($order->logistic_status == 'completed') $logClass = 'log-completed';
-                        @endphp
-                        <span class="badge-pill {{ $logClass }}">
-                            {{ ucfirst($order->logistic_status ?? 'Processing') }}
-                        </span>
-                    </td>
-                    <td style="text-align: right;">
-                        <a href="{{ route('admin.orders.show', $order->id) }}" class="btn-action">
-                            Manage Detail
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+<div class="list-header">
+    <div>Identification</div>
+    <div>Customer Detail</div>
+    <div>Amount</div>
+    <div>Status</div>
+    <div style="text-align: right;">Action</div>
+</div>
+
+<div class="order-grid">
+    @foreach($orders as $order)
+        <div class="order-item-card">
+            <div class="info-group">
+                <span class="info-label">Transaction</span>
+                <div>
+                    <span class="invoice-tag">#{{ $order->invoice }}</span>
+                </div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">{{ $order->created_at->format('M d, Y') }}</span>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Customer Info</span>
+                <span class="info-value">{{ $order->user->name }}</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">UID: {{ $order->user_id }}</span>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Revenue</span>
+                <span class="info-value" style="font-size: 1.1rem;">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+            </div>
+
+            <div class="info-group">
+                <span class="info-label">Status Flow</span>
+                <div class="status-pill {{ $order->status == 'paid' ? 'status-paid' : 'status-pending' }}">
+                    {{ strtoupper($order->status) }}
+                </div>
+            </div>
+
+            <div style="text-align: right;">
+                <a href="{{ route('admin.orders.show', $order->id) }}" class="manage-btn">
+                    Manage
+                </a>
+            </div>
+        </div>
+    @endforeach
 </div>
 
 <div class="pagination-container">

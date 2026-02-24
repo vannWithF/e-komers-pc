@@ -1,173 +1,217 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 
 <style>
-    .form-wrapper {
-        max-width: 700px;
-        margin: 40px auto;
-        padding: 0 20px;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    :root {
+        --titanium-orange: #ff6b35;
+        --deep-orange: #e85a24;
+        --glass-bg: rgba(255, 255, 255, 0.3);
+        --glass-border: rgba(255, 255, 255, 0.5);
+        --text-main: #2d1a12;
     }
 
-    .form-card {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        border: 1px solid #eaeaea;
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        animation: liquidFlow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .form-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #1a202c;
-        margin-bottom: 25px;
+    /* HEADER: Typography melayang */
+    .page-header {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        letter-spacing: -2px;
+        color: var(--text-main);
+    }
+
+    /* LAYOUT: Fragmented Sections (Bukan satu kotak besar) */
+    .form-layout {
         display: flex;
-        align-items: center;
-        gap: 10px;
+        flex-direction: column;
+        gap: 25px;
     }
 
-    .form-group {
-        margin-bottom: 20px;
+    .form-section {
+        background: var(--glass-bg);
+        backdrop-filter: blur(30px) saturate(150%);
+        -webkit-backdrop-filter: blur(30px) saturate(150%);
+        border-radius: 35px;
+        padding: 35px;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 15px 35px rgba(232, 90, 36, 0.05);
     }
 
-    label {
+    /* Input Group Styling */
+    .input-wrapper {
+        position: relative;
+        margin-bottom: 5px;
+    }
+
+    .input-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--deep-orange);
         display: block;
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #4a5568;
+        margin-left: 15px;
         margin-bottom: 8px;
     }
 
-    /* Input Styling */
+    /* Glass Inputs */
     input[type="text"],
     input[type="number"],
     select,
     textarea {
         width: 100%;
-        padding: 12px 15px;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid var(--glass-border);
+        padding: 18px 25px;
+        border-radius: 22px;
+        font-family: inherit;
         font-size: 1rem;
-        color: #2d3748;
-        transition: all 0.3s ease;
-        box-sizing: border-box; /* Biar padding gak ngerusak lebar */
+        font-weight: 700;
+        color: var(--text-main);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     input:focus, select:focus, textarea:focus {
         outline: none;
-        border-color: #4A90E2;
-        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        background: white;
+        border-color: var(--titanium-orange);
+        box-shadow: 0 10px 25px rgba(255, 107, 53, 0.1);
+        transform: translateY(-2px);
     }
 
-    textarea {
-        min-height: 120px;
-        resize: vertical;
-    }
-
-    /* File Input Styling */
-    input[type="file"] {
-        background: #f8fafc;
-        padding: 10px;
-        border: 1px dashed #cbd5e0;
-        width: 100%;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-
-    /* Button Styling */
-    .btn-submit {
-        background-color: #10b981;
-        color: white;
-        font-weight: 600;
-        padding: 12px 25px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        width: 100%;
-        font-size: 1rem;
-        transition: background 0.3s ease, transform 0.1s;
-        margin-top: 10px;
-    }
-
-    .btn-submit:hover {
-        background-color: #059669;
-    }
-
-    .btn-submit:active {
-        transform: scale(0.98);
-    }
-
-    /* Helper Grid untuk Harga & Stok */
-    .form-row {
+    /* Grid Khusus Harga & Stok */
+    .numeric-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 2fr 1fr;
         gap: 20px;
     }
 
-    @media (max-width: 480px) {
-        .form-row {
-            grid-template-columns: 1fr;
-        }
+    /* Custom File Upload Box */
+    .file-drop-zone {
+        border: 2px dashed var(--glass-border);
+        border-radius: 25px;
+        padding: 40px;
+        text-align: center;
+        background: rgba(255,255,255,0.2);
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .file-drop-zone:hover {
+        border-color: var(--titanium-orange);
+        background: rgba(255,255,255,0.5);
+    }
+
+    /* Submit Button: Liquid Gradient */
+    .submit-container {
+        position: sticky;
+        bottom: 25px;
+        z-index: 10;
+    }
+
+    .btn-liquid-save {
+        width: 100%;
+        background: linear-gradient(135deg, var(--titanium-orange), var(--deep-orange));
+        color: white;
+        padding: 22px;
+        border-radius: 25px;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        cursor: pointer;
+        box-shadow: 0 15px 30px rgba(232, 90, 36, 0.3);
+        transition: 0.4s;
+    }
+
+    .btn-liquid-save:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(232, 90, 36, 0.4);
+        filter: brightness(1.1);
+    }
+
+    @keyframes liquidFlow {
+        from { opacity: 0; transform: translateY(50px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
-<div class="form-wrapper">
-    <div class="form-card">
-        <h1 class="form-title">📦 Tambah Produk Baru</h1>
+<div class="form-container">
+    <header class="page-header">
+        <h1 class="page-title">New Product</h1>
+        <p style="font-weight: 700; color: var(--deep-orange); opacity: 0.7;">Fill the essence of your hardware inventory.</p>
+    </header>
 
-        <form action="{{ route('admin.products.store') }}" 
-              method="POST" 
-              enctype="multipart/form-data">
-
-            @csrf
-
-            <div class="form-group">
-                <label>Nama Produk</label>
-                <input type="text" name="name" placeholder="Contoh: Sepatu Lari Pro" required>
-            </div>
-
-            <div class="form-group">
-                <label>Kategori</label>
-                <select name="category_id">
-                    <option value="" disabled selected>Pilih Kategori...</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Harga (Rp)</label>
-                    <input type="number" name="price" placeholder="0" required>
+    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        
+        <div class="form-layout">
+            
+            <div class="form-section">
+                <div class="input-wrapper">
+                    <label class="input-label">Product Identity</label>
+                    <input type="text" name="name" placeholder="Enter product name..." required>
                 </div>
-
-                <div class="form-group">
-                    <label>Stok</label>
-                    <input type="number" name="stock" placeholder="0" required>
+                
+                <div class="input-wrapper" style="margin-top: 20px;">
+                    <label class="input-label">Inventory Category</label>
+                    <select name="category_id">
+                        <option value="" disabled selected>Select category...</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Deskripsi Produk</label>
-                <textarea name="description" placeholder="Tuliskan spesifikasi lengkap produk di sini..."></textarea>
+            <div class="form-section">
+                <div class="numeric-grid">
+                    <div class="input-wrapper">
+                        <label class="input-label">Valuation (IDR)</label>
+                        <input type="number" name="price" placeholder="0" required>
+                    </div>
+                    <div class="input-wrapper">
+                        <label class="input-label">Units</label>
+                        <input type="number" name="stock" placeholder="0" required>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Gambar Produk</label>
-                <input type="file" name="image" accept="image/*">
+            <div class="form-section">
+                <div class="input-wrapper">
+                    <label class="input-label">Technical Specification</label>
+                    <textarea name="description" placeholder="Describe the power of this product..."></textarea>
+                </div>
+
+                <div class="input-wrapper" style="margin-top: 25px;">
+                    <label class="input-label">Visual Asset</label>
+                    <div class="file-drop-zone" onclick="document.getElementById('fileInput').click()">
+                        <span style="font-size: 2rem;">🖼️</span>
+                        <p style="font-weight: 800; margin-top: 10px;">Drop image here or click to browse</p>
+                        <input type="file" id="fileInput" name="image" accept="image/*" style="display: none;">
+                    </div>
+                </div>
             </div>
 
-            <button type="submit" class="btn-submit">
-                Simpan Produk
-            </button>
+            <div class="submit-container">
+                <button type="submit" class="btn-liquid-save">
+                    Deploy Product
+                </button>
+            </div>
 
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 @endsection

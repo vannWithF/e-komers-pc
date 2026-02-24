@@ -33,9 +33,9 @@ class ShopController extends Controller
         return view('shop.index', compact('products', 'categories'));
     }
 
-    public function setups()
+public function setups()
 {
-    $setups = Setup::where('is_active', true)->get();
+    $setups = Setup::latest()->get();
     return view('shop.setups', compact('setups'));
 }
 

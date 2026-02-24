@@ -1,168 +1,198 @@
-@extends('layouts.app')
+@extends('layouts.admin') {{-- Otomatis menggunakan Sidebar Floating yang kita buat tadi --}}
 
 @section('content')
 
 <style>
-    .container {
-        max-width: 1000px;
-        margin: 40px auto;
-        padding: 0 20px;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    :root {
+        --titanium-orange: #ff6b35;
+        --deep-orange: #e85a24;
+        --glass-bg: rgba(255, 255, 255, 0.3);
+        --glass-border: rgba(255, 255, 255, 0.5);
+        --text-main: #2d1a12;
     }
 
-    .header-section {
+    .page-container {
+        animation: liquidEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    /* HEADER: Clean & Minimalist */
+    .header-flex {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 30px;
+        margin-bottom: 40px;
     }
 
-    h1 {
-        font-size: 1.8rem;
-        color: #1a202c;
-        margin: 0;
+    .title-group h1 {
+        font-size: 2.2rem;
+        font-weight: 900;
+        letter-spacing: -1.5px;
+        color: var(--text-main);
     }
 
-    /* Button Tambah */
-    .btn-add {
-        background-color: #4A90E2;
+    /* Floating Add Button */
+    .btn-add-liquid {
+        background: linear-gradient(135deg, var(--titanium-orange), var(--deep-orange));
+        color: white;
+        text-decoration: none;
+        padding: 14px 28px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 10px 25px rgba(232, 90, 36, 0.25);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .btn-add-liquid:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(232, 90, 36, 0.35);
+    }
+
+    /* LIST STRUCTURE: Horizontal Tiles */
+    .product-list-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .product-tile {
+        background: var(--glass-bg);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        border-radius: 30px;
+        padding: 20px 35px;
+        display: grid;
+        grid-template-columns: 3fr 1.5fr 1fr 1fr;
+        align-items: center;
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .product-tile:hover {
+        background: rgba(255, 255, 255, 0.45);
+        transform: translateX(12px);
+        border-color: var(--titanium-orange);
+    }
+
+    /* Content Styling */
+    .prod-info h3 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--text-main);
+    }
+
+    .prod-price {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 900;
+        color: var(--deep-orange);
+        font-size: 1.1rem;
+    }
+
+    .stock-counter {
+        background: white;
+        padding: 8px 16px;
+        border-radius: 15px;
+        font-weight: 800;
+        font-size: 0.85rem;
+        width: fit-content;
+        border: 1px solid var(--glass-border);
+    }
+
+    /* Action Buttons Inside Tile */
+    .tile-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn-edit-tile {
+        background: var(--text-main);
         color: white;
         text-decoration: none;
         padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: background 0.3s;
-        box-shadow: 0 4px 6px rgba(74, 144, 226, 0.2);
-    }
-
-    .btn-add:hover {
-        background-color: #357ABD;
-    }
-
-    /* Table Design */
-    .table-card {
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-        border: 1px solid #edf2f7;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-    }
-
-    thead {
-        background-color: #f7fafc;
-    }
-
-    th {
-        padding: 18px 20px;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        color: #718096;
+        border-radius: 14px;
+        font-size: 0.8rem;
         font-weight: 700;
-        letter-spacing: 0.05em;
-        border-bottom: 2px solid #edf2f7;
+        transition: 0.3s;
     }
 
-    td {
-        padding: 16px 20px;
-        border-bottom: 1px solid #edf2f7;
-        color: #4a5568;
-        font-size: 0.95rem;
-        vertical-align: middle;
+    .btn-edit-tile:hover {
+        background: var(--titanium-orange);
+        transform: scale(1.05);
     }
 
-    /* Hover effect */
-    tr:hover td {
-        background-color: #f8fafc;
-    }
-
-    /* Empty state */
-    .empty-state {
+    /* Empty State Glass */
+    .glass-empty {
         text-align: center;
-        padding: 40px;
-        color: #a0aec0;
-        font-style: italic;
+        padding: 80px;
+        background: var(--glass-bg);
+        border-radius: 40px;
+        border: 1px dashed var(--titanium-orange);
+        color: var(--text-muted);
+        font-weight: 700;
     }
 
-    /* Badge Stok */
-    .stok-badge {
-        background: #e2e8f0;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 600;
+    @keyframes liquidEntrance {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Tombol Aksi */
-    .btn-edit {
-        color: #4A90E2;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: color 0.2s;
-    }
-
-    .btn-edit:hover {
-        color: #2c5282;
-        text-decoration: underline;
-    }
-
-    @media (max-width: 600px) {
-        .header-section {
-            flex-direction: column;
-            align-items: flex-start;
+    /* Responsive */
+    @media (max-width: 900px) {
+        .product-tile {
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
+        .tile-actions { grid-column: span 2; }
     }
 </style>
 
-<div class="container">
-    <div class="header-section">
-        <h1>Daftar Produk</h1>
-        <a href="{{ route('admin.products.create') }}" class="btn-add">
-            + Tambah Produk
+<div class="page-container">
+    <div class="header-flex">
+        <div class="title-group">
+            <h1>Hardware Inventory</h1>
+            <p style="font-weight: 600; color: var(--deep-orange); opacity: 0.7;">Total unit tersedia: {{ $products->count() }} Item</p>
+        </div>
+        <a href="{{ route('admin.products.create') }}" class="btn-add-liquid">
+            <span style="font-size: 1.2rem;">+</span> New Product
         </a>
     </div>
 
-    <div class="table-card">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama Produk</th>
-                    <th>Harga</th>
-                    <th style="text-align: center;">Stock</th>
-                    <th style="text-align: right;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($products as $product)
-                    <tr>
-                        <td style="font-weight: 600; color: #2d3748;">{{ $product->name }}</td>
-                        <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                        <td style="text-align: center;">
-                            <span class="stok-badge">{{ $product->stock }}</span>
-                        </td>
-                        <td style="text-align: right;">
-                            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn-edit">
-                                Edit
-                            </a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="empty-state">
-                            Belum ada produk tersedia.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="product-list-wrapper">
+        @forelse ($products as $product)
+            <div class="product-tile">
+                <div class="prod-info">
+                    <span style="font-size: 0.65rem; font-weight: 800; color: var(--deep-orange); letter-spacing: 1.5px; text-transform: uppercase;">Product Name</span>
+                    <h3>{{ $product->name }}</h3>
+                </div>
+
+                <div class="prod-price">
+                    <span style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Valuation</span>
+                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                </div>
+
+                <div>
+                    <span style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Stock Level</span>
+                    <div class="stock-counter">
+                        {{ $product->stock }} <span style="font-weight: 400; font-size: 0.7rem;">Units</span>
+                    </div>
+                </div>
+
+                <div class="tile-actions">
+                    <a href="{{ route('admin.products.edit', $product->id) }}" class="btn-edit-tile">
+                        Modify
+                    </a>
+                </div>
+            </div>
+        @empty
+            <div class="glass-empty">
+                <div style="font-size: 3rem; margin-bottom: 20px;">📦</div>
+                <p>Belum ada aset hardware yang terdaftar dalam sistem.</p>
+            </div>
+        @endforelse
     </div>
 </div>
 
