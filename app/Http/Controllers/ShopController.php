@@ -9,13 +9,18 @@ use App\Models\Setup;
 
 class ShopController extends Controller
 {
-    public function index()
-    {
-        $products = Product::where('is_active', true)->latest()->paginate(8);
-        $categories = Category::all();
+public function index()
+{
+    $products = Product::where('is_active', true)
+        ->latest()
+        ->paginate(8);
 
-        return view('shop.index', compact('products', 'categories'));
-    }
+    $categories = Category::all();
+
+    $setups = Setup::latest()->take(3)->get(); // 🔥 TAMBAHKAN INI
+
+    return view('shop.index', compact('products', 'categories', 'setups'));
+}
 
     public function show($slug)
     {
