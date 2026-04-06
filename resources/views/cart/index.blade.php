@@ -220,20 +220,33 @@
 </style>
 
 <div class="cart-container">
-    <div class="cart-header">
-        <h1>Your Basket.</h1>
-        <p style="font-weight: 800; color: var(--titanium-orange);">Review your premium hardware selection.</p>
+    <div class="cart-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>Your Basket.</h1>
+            <p style="font-weight: 800; color: var(--titanium-orange); margin-top: 5px;">Review your premium hardware selection.</p>
+        </div>
+        @if(session('cart') && count(session('cart')) > 0)
+            <form action="{{ route('cart.clear') }}" method="POST" onsubmit="return confirm('Hapus semua barang di keranjang?');" style="margin: 0;">
+                @csrf
+                <button type="submit" class="btn-checkout-titanium" style="padding: 12px 24px; background: rgba(255, 77, 77, 0.1); color: #ff4d4d; margin-top: 0; box-shadow: none;">
+                    Clear Cart
+                </button>
+            </form>
+        @endif
     </div>
 
     <div class="cart-grid">
+        {{-- Logika: Cek apakah session keranjang ada dan tidak kosong --}}
         @if(session('cart') && count(session('cart')) > 0)
             {{-- LIST BARANG --}}
             <div class="cart-items-wrap">
                 @php $total = 0; @endphp
+                {{-- Loop setiap item yang tersimpan di session --}}
                 @foreach(session('cart') as $id => $item)
                     @php
+                        // Hitung subtotal per item (harga * jumlah)
                         $subtotal = $item['price'] * $item['quantity'];
-                        $total += $subtotal;
+                        $total += $subtotal; // Akumulasi ke total bayar
                     @endphp
                     <div class="item-card">
                         <div class="item-icon-box">🔌</div>

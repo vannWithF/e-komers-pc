@@ -125,7 +125,7 @@
                     <label class="input-label">Bundle Valuation</label>
                     <div class="price-wrapper">
                         <span class="currency">Rp</span>
-                        <input type="number" name="price" placeholder="0" value="{{ old('price', $setup->price ?? '') }}" required>
+                        <input type="number" name="price" placeholder="0" value="{{ old('price', $setup->price ?? '') }}" readonly required>
                     </div>
                 </div>
 
@@ -158,12 +158,15 @@
                 <div class="hardware-picker">
                     @foreach($products as $product)
                         <label class="hardware-card">
-                            <input type="checkbox" name="products[]" value="{{ $product->id }}" 
+                            <input type="checkbox" class="product-checkbox" data-price="{{ $product->price }}" name="products[]" value="{{ $product->id }}" 
                                 {{ (isset($setup) && $setup->products->contains($product->id)) ? 'checked' : '' }}>
                             <div style="font-size: 1.8rem; margin-bottom: 12px;">🔌</div>
                             <span class="product-name">{{ $product->name }}</span>
                             <span style="font-size: 0.7rem; opacity: 0.6; font-weight: 800; margin-top: 8px; display: block;">
                                 ID: #{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}
+                            </span>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--titanium-orange); margin-top: 5px; display: block;">
+                                Rp {{ number_format($product->price, 0, ',', '.') }}
                             </span>
                         </label>
                     @endforeach
@@ -191,6 +194,27 @@
             uploadPlaceholder.style.display = 'none';
         }
     }
+
+    // Auto calculate price based on selected products
+    const productCheckboxes = document.querySelectorAll('.product-checkbox');
+    const priceInput = document.querySelector('input[name="price"]');
+    
+    function calculateTotal() {
+        let total = 0;
+        productCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                total += parseFloat(cb.dataset.price) || 0;
+            }
+        });
+        priceInput.value = total;
+    }
+
+    productCheckboxes.forEach(cb => {
+        cb.addEventListener('change', calculateTotal);
+    });
+
+    // Run once on load to populate the price for editing setups
+    calculateTotal();
 </script>
 
 @endsection

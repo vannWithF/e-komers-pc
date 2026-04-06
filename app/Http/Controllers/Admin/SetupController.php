@@ -11,44 +11,54 @@ use App\Models\Order;
 
 class SetupController extends Controller
 {
+    /**
+     * Menampilkan daftar setup di dashboard admin.
+     */
     public function index()
     {
+        // Eager load products untuk optimalisasi query
         $setups = Setup::with('products')->latest()->get();
         $totalRevenue = Order::sum('total_price');
 
         return view('admin.setups.index', compact('setups', 'totalRevenue'));
     }
 
+    /**
+     * Form pembuatan setup baru.
+     */
     public function create()
     {
         $products = Product::all();
         return view('admin.setups.create', compact('products'));
     }
 
+    /**
+     * Menyimpan setup baru ke database.
+     */
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
             'products' => 'required|array',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
+            'image' => 'nullable|image|max:2048'
         ]);
 
         $imagePath = null;
-
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')
-                ->store('setups', 'public');
+            $imagePath = $request->file('image')->store('setups', 'public');
         }
+
+        // Kalkulasi harga setup otomatis dari total harga produk komponennya
+        $calculatedPrice = Product::whereIn('id', $request->products)->sum('price');
 
         $setup = Setup::create([
             'name' => $request->name,
             'description' => $request->description,
-            'price' => $request->price,
+            'price' => $calculatedPrice,
             'image' => $imagePath
         ]);
 
+        // Simpan relasi many-to-many ke table setup_items
         $setup->products()->attach($request->products);
 
         return redirect()
@@ -61,36 +71,35 @@ class SetupController extends Controller
         $products = Product::all();
         $selectedProducts = $setup->products->pluck('id')->toArray();
 
-        return view('admin.setups.edit', compact('setup', 'products', 'selectedProducts'));
+        return view('admin.setups.create', compact('setup', 'products', 'selectedProducts'));
     }
 
+    /**
+     * Mengupdate data setup dan sinkronisasi produk komponen.
+     */
     public function update(Request $request, Setup $setup)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
             'products' => 'required|array',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
 
         if ($request->hasFile('image')) {
-
-            // hapus gambar lama
             if ($setup->image) {
                 Storage::disk('public')->delete($setup->image);
             }
-
-            $setup->image = $request->file('image')
-                ->store('setups', 'public');
+            $setup->image = $request->file('image')->store('setups', 'public');
         }
+
+        $calculatedPrice = Product::whereIn('id', $request->products)->sum('price');
 
         $setup->update([
             'name' => $request->name,
             'description' => $request->description,
-            'price' => $request->price
+            'price' => $calculatedPrice
         ]);
 
+        // Sinkronisasi produk (menghapus yang tidak ada di request, menambah yang baru)
         $setup->products()->sync($request->products);
 
         return redirect()
@@ -98,12 +107,16 @@ class SetupController extends Controller
             ->with('success', 'Setup berhasil diupdate.');
     }
 
+    /**
+     * Menghapus setup dan relasi produknya.
+     */
     public function destroy(Setup $setup)
     {
         if ($setup->image) {
             Storage::disk('public')->delete($setup->image);
         }
 
+        // Putus hubungan many-to-many sebelum delete setup
         $setup->products()->detach();
         $setup->delete();
 

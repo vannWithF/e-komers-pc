@@ -9,19 +9,26 @@ use App\Models\Setup;
 
 class ShopController extends Controller
 {
-public function index()
-{
-    $products = Product::where('is_active', true)
-        ->latest()
-        ->paginate(8);
+    /**
+     * Halaman depan toko: Menampilkan produk terbaru, kategori, dan setup piliihan.
+     */
+    public function index()
+    {
+        $products = Product::where('is_active', true)
+            ->latest()
+            ->paginate(8);
 
-    $categories = Category::all();
+        $categories = Category::all();
 
-    $setups = Setup::latest()->take(3)->get(); // 🔥 TAMBAHKAN INI
+        // Mengambil 3 setup terbaru untuk ditampilkan di landing page
+        $setups = Setup::latest()->take(3)->get();
 
-    return view('shop.index', compact('products', 'categories', 'setups'));
-}
+        return view('shop.index', compact('products', 'categories', 'setups'));
+    }
 
+    /**
+     * Menampilkan detail satu produk.
+     */
     public function show($slug)
     {
         $product = Product::where('slug', $slug)->firstOrFail();
@@ -29,6 +36,9 @@ public function index()
         return view('shop.show', compact('product'));
     }
 
+    /**
+     * Filter produk berdasarkan kategori.
+     */
     public function category($slug)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
@@ -38,34 +48,41 @@ public function index()
         return view('shop.index', compact('products', 'categories'));
     }
 
-public function setups()
-{
-    $setups = Setup::latest()->get();
-    return view('shop.setups', compact('setups'));
-}
-
-public function addSetupToCart(Setup $setup)
-{
-    $cart = session()->get('cart', []);
-
-    foreach ($setup->products as $product) {
-
-        if(isset($cart[$product->id])) {
-            $cart[$product->id]['quantity']++;
-        } else {
-            $cart[$product->id] = [
-                "name" => $product->name,
-                "price" => $product->price,
-                "image" => $product->image,
-                "quantity" => 1
-            ];
-        }
+    /**
+     * Menampilkan daftar semua Setup PC yang tersedia.
+     */
+    public function setups()
+    {
+        $setups = Setup::latest()->get();
+        return view('shop.setups', compact('setups'));
     }
 
-    session()->put('cart', $cart);
+    /**
+     * Logika khusus: Menambahkan seluruh komponen dalam sebuah Setup ke dalam keranjang.
+     */
+    public function addSetupToCart(Setup $setup)
+    {
+        $cart = session()->get('cart', []);
 
-    return redirect()->route('cart.index')
-        ->with('success', 'Setup berhasil ditambahkan ke keranjang');
-}
+        // Loop setiap produk yang terikat dalam Setup ini
+        foreach ($setup->products as $product) {
+
+            if(isset($cart[$product->id])) {
+                $cart[$product->id]['quantity']++;
+            } else {
+                $cart[$product->id] = [
+                    "name" => $product->name,
+                    "price" => $product->price,
+                    "image" => $product->image,
+                    "quantity" => 1
+                ];
+            }
+        }
+
+        session()->put('cart', $cart);
+
+        return redirect()->route('cart.index')
+            ->with('success', 'Setup berhasil ditambahkan ke keranjang');
+    }
 }
 

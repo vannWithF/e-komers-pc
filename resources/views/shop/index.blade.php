@@ -25,17 +25,27 @@
         font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
+    aside {
+        position: sticky;
+        top: 40px; /* Reduced top gap slightly if it is too low */
+        align-self: start;
+    }
+
     /* --- 1. THE ARCHITECT SIDEBAR --- */
     .sidebar-glass {
-        position: sticky;
-        top: 100px;
         height: fit-content;
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
         background: var(--glass);
         backdrop-filter: blur(20px);
         border-radius: 40px;
         padding: 40px;
         border: 1px solid white;
         box-shadow: 0 30px 60px rgba(0,0,0,0.03);
+    }
+    
+    .sidebar-glass::-webkit-scrollbar {
+        display: none; /* Hide scrollbar for a cleaner look */
     }
 
     .sidebar-header {

@@ -180,6 +180,7 @@
 
         <div class="order-summary">
             @php $total = 0; @endphp
+            {{-- Menampilkan ulang daftar barang dari session untuk review terakhir --}}
             @foreach($cart as $item)
                 @php
                     $subtotal = $item['price'] * $item['quantity'];
@@ -202,6 +203,7 @@
             </div>
             <div class="price-row">
                 <span>Express Shipping</span>
+                {{-- Biaya ongkir statis/flat sesuai logika di CheckoutController --}}
                 <span style="color: var(--deep-titanium);">Rp 20.000</span>
             </div>
             

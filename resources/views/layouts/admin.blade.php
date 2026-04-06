@@ -177,24 +177,71 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 20px;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
             border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.1);
+            border-color: var(--titanium-orange);
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info .name {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: block;
+        }
+
+        .user-info .role {
+            font-size: 0.65rem;
+            color: var(--titanium-orange);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
         }
 
         .avatar {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #fff, #ffe0d1);
-            border: 2px solid var(--titanium-orange);
-            border-radius: 12px;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--titanium-orange), var(--deep-orange));
+            border: 3px solid #fff;
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--deep-orange);
-            font-weight: 700;
-            font-size: 0.8rem;
+            color: white;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 15px rgba(232, 90, 36, 0.2);
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            background: #10b981;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .content-area {
@@ -203,6 +250,8 @@
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--soft-orange) transparent;
+            /* Fix potential overflow issues */
+            position: relative;
         }
 
         /* Anti-Template Card Style */
@@ -296,11 +345,14 @@
             </div>
 
             <div class="user-profile">
-                <div style="text-align: right;">
-                    <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-main);">{{ Auth::user()->name }}</p>
-                    <p style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">SUPER ADMIN</p>
+                <div class="user-info">
+                    <span class="name">{{ Auth::user()->name }}</span>
+                    <span class="role">Super Admin</span>
                 </div>
-                <div class="avatar">{{ substr(Auth::user()->name, 0, 2) }}</div>
+                <div class="avatar-wrapper">
+                    <div class="avatar">{{ substr(Auth::user()->name, 0, 1) }}{{ substr(Auth::user()->name, -1) }}</div>
+                    <div class="status-dot"></div>
+                </div>
             </div>
         </header>
 

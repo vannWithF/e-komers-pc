@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add/{id}', [CartController::class, 'add'])->name('add');
         Route::post('/remove/{id}', [CartController::class, 'remove'])->name('remove');
+        Route::post('/clear', [CartController::class, 'clear'])->name('clear');
         Route::post('/setup/{setup}/add', [ShopController::class, 'addSetupToCart'])->name('setup.add');
     });
 

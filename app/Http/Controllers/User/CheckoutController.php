@@ -11,15 +11,20 @@ use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
+    /**
+     * Menampilkan halaman ringkasan pesanan sebelum pembayaran.
+     */
     public function index()
     {
         $cart = session()->get('cart', []);
 
+        // Pastikan user sudah melengkapi nomor HP/data pengiriman
         if (!auth()->user()->phone) {
-        return redirect()->route('shipping.edit')
-            ->with('error', 'Lengkapi data pengiriman dulu');
-    }
+            return redirect()->route('shipping.edit')
+                ->with('error', 'Lengkapi data pengiriman dulu');
+        }
 
+        // Jangan izinkan checkout jika keranjang kosong
         if(empty($cart)){
             return redirect()->route('cart.index');
         }
@@ -27,6 +32,9 @@ class CheckoutController extends Controller
         return view('checkout.index', compact('cart'));
     }
 
+    /**
+     * Memproses database transaksi dari data keranjang session.
+     */
     public function process()
     {
         $cart = session()->get('cart', []);
@@ -36,13 +44,14 @@ class CheckoutController extends Controller
         }
 
         $total = 0;
-
+        // Hitung total harga barang
         foreach($cart as $id => $item){
             $total += $item['price'] * $item['quantity'];
         }
 
-        $shipping = 20000; // flat shipping simple UKK
+        $shipping = 20000; // Biaya ongkir flat
 
+        // 1. Buat Header Order
         $order = Order::create([
             'user_id' => auth()->id(),
             'invoice' => 'INV-' . strtoupper(Str::random(8)),
@@ -51,6 +60,7 @@ class CheckoutController extends Controller
             'status' => 'pending'
         ]);
 
+        // 2. Buat Detail Order
         foreach($cart as $id => $item){
 
             OrderItem::create([
@@ -61,13 +71,17 @@ class CheckoutController extends Controller
                 'subtotal' => $item['price'] * $item['quantity'],
             ]);
 
-            // Kurangi stock
+            // 3. Kurangi stok produk secara real-time
             $product = Product::find($id);
-            $product->decrement('stock', $item['quantity']);
+            if ($product) {
+                $product->decrement('stock', $item['quantity']);
+            }
         }
 
+        // 4. Kosongkan keranjang setelah order dibuat
         session()->forget('cart');
 
+        // Lanjut ke halaman pembayaran (Midtrans/Manual)
         return redirect()->route('payment.show', $order->id);
     }
 }
